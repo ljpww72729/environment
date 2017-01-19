@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">环保监控</string>
+    <string name="progressActivityErrorButton">重试</string>
+    <string name="progressActivityEmptyTitlePlaceholder">无任何数据</string>
+    <string name="progressActivityEmptyContentPlaceholder">无任何数据\n是不是进错门了？</string>
+    <string name="progressActivityErrorTitlePlaceholder">无法连接</string>
+    <string name="progressActivityErrorContentPlaceholder">无法连接到服务器\n请检查网络并重试</string>
+
+    <string name="email">邮箱</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
+    <string name="login_success">登录成功</string>
+    <string name="error_invalid_email">邮箱无效！</string>
+    <string name="error_username_empty">用户名不能为空！</string>
+    <string name="error_password_empty">密码不能为空！</string>
+    <string name="error_invalid_password">密码无效！密码长度为4-20位</string>
+    <string name="error_incorrect_password">邮箱或密码错误！</string>
+
+</resources>
