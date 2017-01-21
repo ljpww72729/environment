@@ -21,19 +21,21 @@
                 android:theme="@style/AppTheme.Launcher">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
         </activity>
 
         <activity
                 android:name=".module.webview.NormalWVActvity"
-                android:screenOrientation="portrait"/>
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden"/>
         <activity
                 android:name=".module.login.LoginActivity"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
         </activity>
     </application>
 

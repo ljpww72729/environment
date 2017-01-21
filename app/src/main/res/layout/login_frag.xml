@@ -92,13 +92,51 @@
 
 
                     <LinearLayout
+                            android:id="@+id/ll_checkbox"
+                            android:layout_marginTop="@dimen/dp_12"
+                            android:layout_below="@+id/ll_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                        <CheckBox
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="记住密码"
+                                android:textColor="@color/secondary_text"
+                                android:id="@+id/checkBox"/>
+                    </LinearLayout>
+
+                    <android.support.v7.widget.AppCompatButton
+                            android:layout_below="@+id/ll_checkbox"
+                            android:id="@+id/btn_login"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp_12"
+                            android:layout_marginBottom="@dimen/dp_24"
+                            android:background="@drawable/login_btn"
+                            style="@style/LP_Normal_Button"
+                            android:gravity="center"
+                            android:text="@string/login"/>
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:layout_alignParentBottom="true"
+                            android:textColor="#487AB8"
+                            android:textSize="@dimen/sp_16"
+                            android:layout_marginBottom="@dimen/dp_8"
+                            android:text="北京华安普惠高新技术有限公司©"/>
+
+                    <LinearLayout
                             android:id="@+id/ll_password"
-                            android:layout_below="@+id/ll_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/edit_bg"
-                            android:layout_marginTop="@dimen/dp_16"
-                            android:padding="@dimen/dp_8">
+                            android:layout_marginTop="16dp"
+                            android:padding="@dimen/dp_8"
+                            android:layout_below="@+id/ll_name"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true">
 
                         <EditText
                                 android:layout_width="match_parent"
@@ -114,27 +152,6 @@
                                 android:drawableLeft="@drawable/password"
                                 android:id="@+id/user_password"/>
                     </LinearLayout>
-
-                    <android.support.v7.widget.AppCompatButton
-                            android:layout_below="@+id/ll_password"
-                            android:id="@+id/btn_login"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dp_24"
-                            android:layout_marginBottom="@dimen/dp_24"
-                            android:background="@drawable/login_btn"
-                            style="@style/LP_Normal_Button"
-                            android:gravity="center"
-                            android:text="@string/login"/>
-                    <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:layout_alignParentBottom="true"
-                            android:textColor="#487AB8"
-                            android:textSize="@dimen/sp_16"
-                            android:layout_marginBottom="@dimen/dp_8"
-                            android:text="北京华安普惠高新技术有限公司©"/>
                 </RelativeLayout>
 
             </LinearLayout>
