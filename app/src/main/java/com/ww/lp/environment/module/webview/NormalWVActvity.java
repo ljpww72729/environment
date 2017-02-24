@@ -59,8 +59,10 @@ public class NormalWVActvity extends BaseActivity {
         webSettings.setAllowFileAccess(true);
         webSettings.setAppCacheEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
-
-        normal_wv.loadUrl(loadUrl);
+//        webSettings.setBlockNetworkImage(true);
+        normal_wv.addJavascriptInterface(new WebAppInterface(NormalWVActvity.this, normal_wv), "Android");
+//        normal_wv.loadUrl(loadUrl);
+        normal_wv.loadUrl("file:///android_asset/EPAPP/index.html");
         normal_wv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -79,6 +81,8 @@ public class NormalWVActvity extends BaseActivity {
             public void onPageFinished(WebView view, String url) {
 //                showContent();
                 loading.setVisibility(View.GONE);
+//                ToastUtils.toastShort(view.getTitle());
+//                normal_wv.getSettings().setBlockNetworkImage(false);
                 super.onPageFinished(view, url);
             }
 
@@ -113,7 +117,7 @@ public class NormalWVActvity extends BaseActivity {
         back();
     }
 
-    private void back() {
+    public void back() {
         if (normal_wv.canGoBack()) {
             normal_wv.goBack();
         } else {

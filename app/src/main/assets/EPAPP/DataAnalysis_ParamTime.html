@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="lib/jquery.1.9.1.min.js"></script>
+    <link href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <link href="lib/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-datepicker.min.js"></script>
+    <script src="lib/common.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        var arr = location.search.replace('?', '').split('&');
+        var ta = arr[0].split('=');
+        var ea = arr[1].split('=');
+        var target = ta[1];
+        var eid = ea[1];
+        var sv = "";
+        app.controller('myCtrl', function ($scope) {
+            switch (target) {
+                case "QiTing":
+                    sv = "sensortype=2&variabletype=1";
+                    break;
+                case "LiuLiang":
+                    sv = "sensortype=3&variabletype=3";
+                    break;
+                case "DianLiu":
+                    sv = "sensortype=2&variabletype=2";
+                    break;
+                case "LiuLiangDuiBi":
+                    sv = "sensortype=3&variabletype=3";
+                    break;
+                case "RongJie":
+                    sv = "sensortype=4&variabletype=4";
+                    break;
+                case "WuNi":
+                    sv = "sensortype=5&variabletype=5";
+                    break;
+                case "YangHua":
+                    sv = "sensortype=6&variabletype=6";
+                    break;
+                case "YeWei":
+                    sv = "sensortype=7&variabletype=7";
+                    break;
+                case "COD":
+                    sv = "sensortype=8&variabletype=8";
+                    break;
+                case "AnDan":
+                    sv = "sensortype=10&variabletype=10";
+                default:
+                    break;
+            }
+            var url = ip + "/webapi/v2/Statistics/TakeVariableRelationByEid/" + eid + "?" + sv;
+            $.post(url, function (data) {
+                $scope.$apply(function () {
+                    $scope.params = [];
+                    //$scope.params = data.data;
+                    data.data.forEach(function (val) {
+                        $scope.params.push({ id: val.Id, name: val.Name, selected: 0 });
+                    });
+                });
+            });
+            //$scope.params = [{ id: 1, name: '一级提升泵启停', selected: 0 }, { id: 2, name: '二级提升泵启停', selected: 0 }, { id: 3, name: '三级提升泵启停', selected: 0 }, { id: 4, name: '4级提升泵启停', selected: 0 }, { id: 5, name: '5级提升泵启停', selected: 0 }, { id: 6, name: '6级提升泵启停', selected: 0 }];
+            $scope.times = [{ id: 1, name: '今天', selected: 1 }, { id: 2, name: '昨天', selected: 0 }, { id: 3, name: '最近3天', selected: 0 }, { id: 4, name: '最近7天', selected: 0 }, { id: 5, name: '最近30天', selected: 0 }, { id: 6, name: '这个月', selected: 0 }, { id: 7, name: '上个月', selected: 0 }];
+            $scope.next = function () {
+                $("#div_params_tab").removeClass("ep-da-pt-caption-active");
+                $("#div_time_tab").addClass("ep-da-pt-caption-active");
+                $('#div_times').removeClass("hide");
+                $('#div_params').addClass("hide");
+                $("#footer_params").addClass('hide');
+                $("#footer_times").removeClass('hide');
+            };
+            $scope.view = function () {
+                
+                if ($("#custom_time").hasClass("ep-btn-selected")) {
+                    var start = new Date($('#div_startdate').datepicker('getDate'));
+                    var end = new Date($("#div_enddate").datepicker('getDate'));
+                    if (start == null || end == null || start >= end) {
+                        alert('开始时间或结束时间有误！');
+                    }
+                }
+                location.href = "DataAnalysisChart_QiTing.html";
+                
+            }
+            $scope.paramsTabClick = function () {
+                $("#div_params_tab").addClass("ep-da-pt-caption-active");
+                $("#div_time_tab").removeClass("ep-da-pt-caption-active");
+                $('#div_times').addClass("hide");
+                $('#div_params').removeClass("hide");
+                $("#footer_params").removeClass('hide');
+                $("#footer_times").addClass('hide');
+            }
+            $scope.timesTabClick = function () {
+                $scope.next();
+            }
+
+            $scope.target = target;
+            $scope.selectedNo = 0;
+            $scope.selectedDate = '今天';
+
+            $scope.btnParamSelected = function (id) {
+
+                if ($("#param" + id).hasClass('ep-btn-selected')) {
+                    $("#param" + id).removeClass('ep-btn-selected');
+                    $scope.params.filter(function (val) { return val.id == id; })[0].selected = 0;
+                    
+                } else {
+                    if ($scope.selectedNo < 5) {
+                        $("#param" + id).addClass('ep-btn-selected');
+                        $scope.params.filter(function (val) { return val.id == id; })[0].selected = 1;
+                    } 
+                }
+                
+                $scope.selectedNo = $scope.params.filter(function (val) { return val.selected == 1; }).length;
+                if ($scope.selectedNo > 0) {
+                    $("#btn_next").removeClass('disabled');
+                } else {
+                    $("#btn_next").addClass('disabled');
+                }
+            }
+            $scope.btnTimeSelected = function (id) {
+                $scope.times.forEach(function (val) { val.selected = 0; $("#time" + val.id).removeClass("ep-btn-selected"); });
+                var selected = $scope.times.filter(function (val) { return val.id == id; })[0];
+                selected.selected = true;
+                $("#time" + id).addClass("ep-btn-selected");
+                if ($scope.selectedNo > 0 ) {
+                    $("#btn_view").removeClass('disabled');
+                } else {
+                    $("#btn_view").addClass('disabled');
+                }
+                $("#btn_view").removeClass('disabled');
+                $("#custom_time").removeClass("ep-btn-selected");
+                $("#div_custom_date").addClass("hidden");
+                $scope.selectedDate = selected.name;
+            }
+            $scope.btnCustomTimeSelected = function () {
+                $scope.times.forEach(function (val) { val.selected = 0; $("#time" + val.id).removeClass("ep-btn-selected"); });
+                $("#custom_time").addClass("ep-btn-selected");
+                $("#btn_view").removeClass('disabled');
+                $("#div_custom_date").removeClass("hidden");
+                $scope.selectedDate = "";
+            }
+            
+        });
+        
+    </script>
+</head>
+<body>
+    <div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+        <div class="row ep-caption">
+            <div class="col-xs-2 ep-full-height" style="display: table;">
+                <div style="display: table-cell; vertical-align: middle;">
+                    <a href="javascript:history.go(-1)"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                </div>
+            </div>
+            <div class="col-xs-8 text-center ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle">
+                    数据统计
+                </div>
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+        <div class="row">
+            <div id="div_params_tab" class="col-xs-6 ep-da-pt-caption ep-da-pt-caption-active" ng-click="paramsTabClick()">
+                统计变量
+            </div>
+            <div id="div_time_tab" class="col-xs-6 ep-da-pt-caption " ng-click="timesTabClick()">
+                时间范围
+            </div>
+        </div>
+        <div class="row" id="div_params">
+            <div class="col-xs-12">
+                <div id="param{{x.id}}" class="ep-list-btn" ng-repeat="x in params" ng-click="btnParamSelected(x.id)">
+                    {{x.name}}
+                </div>
+            </div>
+        </div>
+        <div class="row hide" id="div_times">
+            <div class="col-xs-12">
+                <div id="time{{x.id}}" class="ep-list-btn {{x.selected==1?'ep-btn-selected':''}}" ng-repeat="x in times" ng-click="btnTimeSelected(x.id)">
+                    {{x.name}}
+                </div>
+                <div id="custom_time" class="ep-list-btn" ng-click="btnCustomTimeSelected()">
+                    选择日期
+                </div>
+                <div id="div_custom_date" class="hidden">
+                    <div id="div_startdate" class="input-group date ep-da-pt-list" data-provide="datepicker" data-date-end-date="0d">
+                        <input id="start_date" type="text" class="form-control datepicker" placeholder="开始日期">
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                    </div>
+                    
+                    <div id="div_enddate" class="input-group date ep-da-pt-list" data-provide="datepicker" data-date-end-date="0d">
+                        <input id="end_date" type="text" class="form-control datepicker" placeholder="结束日期">
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div id="ep-prevent-footer-from-overlapping"></div>
+            <div id="footer_params" class="ep-da-pt-footer">
+                <span class="ep-da-pt-footer-text1"> 已选择：</span> <span class="ep-da-pt-footer-text2">{{selectedNo}}组设备</span> 
+                <button id="btn_next" class="btn btn-success disabled" style="position:absolute;right:10px;top:5px;" ng-click="next()">下一步</button>
+            </div>
+            <div id="footer_times" class="ep-da-pt-footer hide">
+                <span class="ep-da-pt-footer-text1"> 查看：</span> <span class="ep-da-pt-footer-text2">{{selectedDate}}</span>
+                <button id="btn_view" class="btn btn-success" style="position:absolute;right:10px;top:5px;" ng-click="view()">查 看</button>
+            </div>
+        </div>
+    </div>
+    <script src="lib/bootstrap-datepicker.zh-CN.min.js" charset="UTF-8"></script>
+    <script>
+        $('#div_startdate').datepicker({ autoclose: true });
+        $('#div_enddate').datepicker({ autoclose: true });
+    </script>
+</body>
+</html>

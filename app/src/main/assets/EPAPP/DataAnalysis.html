@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="lib/jquery.1.9.1.min.js"></script>
+    <link href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <script src="lib/common.js"></script>
+    <script>
+        var arr = location.search.replace('?', '').split('=');
+        var eid = arr[arr.indexOf('eid') + 1];
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function ($scope) {
+            $scope.mousedown = function (target) {
+                var url = "DataAnalysis_ParamTime.html?target=" + target + "&eid=" + eid;
+                location.href = url;
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container-fluid" style="height:100vh" ng-app="myApp" ng-controller="myCtrl">
+        <div class="row ep-caption">
+            <div class="col-xs-2 ep-full-height" style="display: table;">
+                <div style="display: table-cell; vertical-align: middle;">
+                    <a href="CorpSelection.html?target=DataAnalysis"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                </div>
+            </div>
+            <div class="col-xs-8 text-center ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle">
+                    数据统计
+                </div>
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+        <div class="row" style="height:calc(33vh - 16px)">
+            <div class="col-xs-4 ep-right-border-light ep-bottom-border-light ep-full-height ep-table" ng-mousedown="mousedown('QiTing')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/10.png" alt="启停统计" class="ep-tile-image" />
+                    <div class="ep-tile-font">启停统计</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-right-border-light ep-bottom-border-light ep-full-height ep-table" ng-mousedown="mousedown('LiuLiang')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/11.png" alt="流量统计" class="ep-tile-image" />
+                    <div class="ep-tile-font">流量统计</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-bottom-border-light ep-full-height ep-table" ng-mousedown="mousedown('DianLiu')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/12.png" alt="电流统计" class="ep-tile-image" />
+                    <div class="ep-tile-font">电流统计</div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height:calc(34vh - 18px)">
+            <div class="col-xs-4 ep-right-border-light ep-bottom-border-light ep-full-height ep-table" ng-mousedown="mousedown('LiuLiangDuiBi')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/13.png" alt="流量对比" class="ep-tile-image" />
+                    <div class="ep-tile-font">流量对比</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-right-border-light ep-bottom-border-light ep-full-height ep-table" ng-mousedown="mousedown('RongJie')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/14.png" alt="溶解氧浓度" class="ep-tile-image" />
+                    <div class="ep-tile-font">溶解氧浓度</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-bottom-border-light ep-full-height ep-table" ng-mousedown="mousedown('WuNi')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/15.png" alt="污泥浓度" class="ep-tile-image" />
+                    <div class="ep-tile-font">污泥浓度</div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height:calc(33vh - 16px)">
+            <div class="col-xs-4 ep-right-border-light ep-full-height ep-table" ng-mousedown="mousedown('YangHua')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/16.png" alt="氧化还原电位" class="ep-tile-image" />
+                    <div class="ep-tile-font">氧化还原电位</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-right-border-light ep-full-height ep-table" ng-mousedown="mousedown('YeWei')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/17.png" alt="液位" class="ep-tile-image" />
+                    <div class="ep-tile-font">液位</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-full-height ep-table" ng-mousedown="mousedown('COD')">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/18.png" alt="COD浓度" class="ep-tile-image" />
+                    <div class="ep-tile-font">COD浓度</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

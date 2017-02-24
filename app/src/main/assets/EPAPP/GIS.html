@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="lib/jquery.1.9.1.min.js"></script>
+    <link href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <script src="lib/common.js"></script>
+    <style type="text/css">
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+        #allmap {
+            width: 100%;
+            height: calc(100vh - 50px);
+            overflow: hidden;
+            margin: 0;
+            font-family: "微软雅黑";
+        }
+        #l-map {
+            height: 100%;
+            width: 78%;
+            float: left;
+            border-right: 2px solid #bcbcbc;
+        }
+
+        #r-result {
+            height: 100%;
+            width: 20%;
+            float: left;
+        }
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=G4mcIxZpZKLIBGlscYACf6xFhhO7t0El"></script>
+</head>
+<body>
+    <div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+        <div class="row ep-caption">
+            <div class="col-xs-2 ep-full-height" style="display: table;">
+                <div style="display: table-cell; vertical-align: middle;">
+                    <a href="index.html"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                </div>
+            </div>
+            <div class="col-xs-8 text-center ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle">
+                    GIS地图
+                </div>
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+    </div>
+    <div id="allmap"></div>
+</body>
+</html>
+<script type="text/javascript">
+    var app = angular.module('myApp', []);
+    var data_info = [];
+    
+    app.controller('myCtrl', function ($scope) {
+        $.post(ip + "/webapi/v2/agencies/TakeEnterprises/" + epu_id, function (data) {
+            data.data.forEach(function (val) {
+                data_info.push([val.Longitude, val.Latitude, val.Name]);
+            });
+            map = new BMap.Map("allmap");
+            map.enableScrollWheelZoom(true);
+            map.centerAndZoom(new BMap.Point(116.417854, 39.921988), 15);
+
+            //var data_info = [[116.417854, 39.921988, "巢湖市第一污水处理厂<br/>建厂年份：2007<br/>污染源编码：123000012<br/>环保监督部门：合肥市环保局"],
+            //				 [116.406605, 39.921585, "巢湖市第二污水处理厂<br/>建厂年份：2008<br/>污染源编码：123000013<br/>环保监督部门：合肥市环保局"],
+            //				 [116.412222, 39.912345, "巢湖市第三污水处理厂<br/>建厂年份：2009<br/>污染源编码：123000014<br/>环保监督部门：合肥市环保局"]
+            //				];
+            var opts = {
+                width: 250,     // 信息窗口宽度
+                height: 90,     // 信息窗口高度
+                title: "", // 信息窗口标题
+                enableMessage: true//设置允许信息窗发送短息
+            };
+            for (var i = 0; i < data_info.length; i++) {
+                var marker = new BMap.Marker(new BMap.Point(data_info[i][0], data_info[i][1]));  // 创建标注
+                var content = data_info[i][2];
+                map.addOverlay(marker);               // 将标注添加到地图中
+                addClickHandler(content, marker);
+            }
+            function addClickHandler(content, marker) {
+                marker.addEventListener("click", function (e) {
+                    openInfo(content, e)
+                }
+                );
+            }
+            function openInfo(content, e) {
+                var p = e.target;
+                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                var infoWindow = new BMap.InfoWindow(content, opts);  // 创建信息窗口对象
+                map.openInfoWindow(infoWindow, point); //开启信息窗口
+            }
+            if (data_info.length > 0) {
+                map.centerAndZoom(new BMap.Point(data_info[0][0], data_info[0][1]), 12);
+            }
+            
+        });
+    });
+    console.log(data_info);
+	// 百度地图API功能
+    
+</script>

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="lib/jquery.1.9.1.min.js"></script>
+    <link href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <link href="lib/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-datepicker.min.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+
+        app.controller('myCtrl', function ($scope) {
+            $scope.items = [{ id: 1, name: '周报', selected: 1 }, { id: 2, name: '月报', selected: 0 }, { id: 3, name: '综合周报', selected: 0 }, { id: 4, name: '综合月报', selected: 0 }];
+            $scope.btnItemSelected = function (id) {
+                $scope.items.forEach(function (val) { val.selected = 0; $("#item" + val.id).removeClass("ep-btn-selected"); });
+                $scope.items.filter(function (val) { return val.id == id; })[0].selected = true;
+                $("#item" + id).addClass("ep-btn-selected");
+               
+            }
+            $scope.view = function () {
+                var selectedItems = $scope.items.filter(function (val) { return val.selected == 1; });
+                if (selectedItems != null) {
+                    if (selectedItems.length > 0) {
+                        switch (selectedItems[0].id) {
+                            case 1:
+                                location.href = "ReportWeek.html";
+                                break;
+                            case 2:
+                                location.href = "ReportMonth.html";
+                                break;
+                            case 3:
+                                location.href = "ReportWeekAll.html";
+                                break;
+                            case 4:
+                                location.href = "ReportMonthAll.html";
+                                break
+                            default:
+
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+        <div class="row ep-caption">
+            <div class="col-xs-2 ep-full-height" style="display: table;">
+                <div style="display: table-cell; vertical-align: middle;">
+                    <a href="CorpSelection.html?target=Report"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                </div>
+            </div>
+            <div class="col-xs-8 text-center ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle">
+                    分析报表
+                </div>
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+        <div class="row text-center ep-epb-info-panel">
+            <div class="ep-epb-info-head-txt">巢湖市第一污水处理厂</div>
+            <div class="ep-epb-info-contact-panel">
+                陆小凤<br />
+                0551-8766543
+            </div>
+        </div>
+        <div class=" ep-epb-data-panel">
+            <div class="row" id="div_items">
+                <div class="col-xs-12">
+                    <div id="item{{x.id}}" class="ep-list-btn {{x.selected==1?'ep-btn-selected':''}}" ng-repeat="x in items" ng-click="btnItemSelected(x.id)">
+                        {{x.name}}
+                    </div>
+                    <div>
+                        <div id="div_reportdate" class="input-group date ep-da-pt-list" data-provide="datepicker" data-date-end-date="0d">
+                            <input id="report_date" type="text" class="form-control datepicker" placeholder="选择日期">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div id="ep-prevent-footer-from-overlapping"></div>
+            <div id="footer_report" class="ep-report-footer">
+                <span class="ep-report-footer-text1"> </span> <span class="ep-report-footer-text2">{{selectedDate}}</span>
+                <button id="btn_view" class="btn btn-success" style="position:absolute;right:10px;top:5px;" ng-click="view()">查 看</button>
+            </div>
+        </div>
+    </div>
+    <script src="lib/bootstrap-datepicker.zh-CN.min.js" charset="UTF-8"></script>
+    <script>
+        $('#report_date').datepicker({ autoclose: true });
+    </script>
+</body>
+</html>

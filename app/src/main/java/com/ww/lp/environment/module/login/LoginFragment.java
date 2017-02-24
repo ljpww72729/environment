@@ -79,6 +79,10 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     @Override
     public void success(boolean result) {
         removeProgressDialog();
+//        Intent intent = new Intent(getActivity(), NormalWVActvity.class);
+//        intent.putExtra(NormalWVActvity.LOADURL, "http://www.wowofun.com/test/epapp/index.html");
+//        startActivity(intent);
+//        getActivity().finish();
         if (result) {
             //请求成功
             if (loginFragBinding.checkBox.isChecked()) {

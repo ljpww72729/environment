@@ -31,6 +31,7 @@
         <activity
                 android:name=".module.webview.NormalWVActvity"
                 android:screenOrientation="portrait"
+                android:launchMode="singleTask"
                 android:windowSoftInputMode="stateHidden"/>
         <activity
                 android:name=".module.login.LoginActivity"

@@ -1,0 +1,337 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="lib/jquery.1.9.1.min.js"></script>
+    <link href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <script src="lib/common.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        app.filter('btnName', function () {
+            return function (x) {
+                return x=='false'?'选择':'取消';
+            };
+        });
+        app.controller('myCtrl', function ($scope) {
+            var arr = location.search.replace('?','').split('=');
+            var eid = arr[arr.indexOf('eid') + 1];
+            // get corp info by corp id
+            $.post(ip + "/webapi/v2/Enterprises/TakeById?eid=" + eid, function (data) {
+                //console.log(data);
+                $scope.$apply(function () {
+                    $scope.info = data.data[0];
+                });
+            });
+            $("#div_emission").on('show.bs.collapse', function (e) {
+                $.post(ip + "/webapi/v2/Emissions/TakeByEnterpriseId?eid=" + eid, function (data) {
+                    //console.log(data);
+                    $scope.$apply(function () {
+                        $scope.pollutants = data.data;
+                    });
+                });
+            });
+            $("#div_treatments").on('show.bs.collapse', function (e) {
+                //console.log(JSON.stringify(e));
+                $.post(ip + "/webapi/v2/Treatments/TakeByEnterpriseId?eid=" + eid, function (data) {
+                    //console.log(data);
+                    $scope.$apply(function () {
+                        $scope.clearSystems = data.data;
+                    });
+                });
+            });
+            $("#div_devices").on('show.bs.collapse', function (e) {
+                //console.log(JSON.stringify(e));
+                $.post(ip + "/webapi/v2/Devices/TakeByEnterpriseId?eid=" + eid, function (data) {
+                    //console.log(data);
+                    $scope.$apply(function () {
+                        $scope.devices = data.data;
+                    });
+                });
+            });
+            $("#div_devicegroups").on('show.bs.collapse', function (e) {
+                //console.log(JSON.stringify(e));
+                $.post(ip + "/webapi/v2/DeviceGroups/TakeByEnterpriseId?eid=" + eid, function (data) {
+                    //console.log(data);
+                    $scope.$apply(function () {
+                        $scope.deviceGroups = data.data;
+                    });
+                });
+            });
+            $("#div_sensors").on('show.bs.collapse', function (e) {
+                //console.log(JSON.stringify(e));
+                $.post(ip + "/webapi/v2/Sensors/TakeByEnterpriseId?eid=" + eid, function (data) {
+                    //console.log(data);
+                    $scope.$apply(function () {
+                        $scope.sensors = data.data;
+                    });
+                });
+            });
+            $("#div_datahubs").on('show.bs.collapse', function (e) {
+                //console.log(JSON.stringify(e));
+                $.post(ip + "/webapi/v2/DataHubs/TakeByEnterpriseId?eid=" + eid, function (data) {
+                    //console.log(data);
+                    $scope.$apply(function () {
+                        $scope.datahubs = data.data;
+                    });
+                });
+            });
+
+            
+            //
+            //$scope.info = {name:'巢湖市新华路大厂工业区12号',foundationDate:'2007',pollutionCode:'123000012',epu:'合肥市环保局',contactPerson:'陆晓丰',contactPhone:'0551-8766543'};
+            $scope.search = function(){
+                //$scope.info = ["太原市第一污水处理厂", "太原市第二污水处理厂"];
+            };
+            
+        });
+    </script>
+</head>
+<body>
+    <div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+        <div class="row ep-caption">
+            <div class="col-xs-2 ep-full-height" style="display: table;">
+                <div style="display: table-cell; vertical-align: middle;">
+                    <a href="CorpSelection.html?target=Corp"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                </div>
+            </div>
+            <div class="col-xs-8 text-center ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle">
+                    {{info.Name}}
+                </div>
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+        <div class="row">
+            <div class="">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="搜索">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-click="search()">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div><!-- /input-group -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 ep-corp-panel text-center">
+                <div class="ep-corp-name">{{info.Address}}</div>
+                <div>建厂年份：{{info.FoundTime}}</div>
+                <div>污染源编码：{{info.PollutantCode}}</div>
+                <div>环保监督部门：{{info.AgencyId}}</div>
+                <div>
+                    <div>{{info.Liaison}}</div>
+                    <div>{{info.Phone}}</div>
+                </div>
+            </div>
+            <div class="col-xs-12 ep-corp-data-panel">
+                <div class="panel-group" id="accordion">
+                    <div id="div_emission" class="panel panel-default ep-noborder">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                    污染物排放
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default" ng-repeat="x in pollutants">
+                                        <div class="panel-heading ep-panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#collapse1" href="#collapse1-{{x.Id}}">
+                                                    {{x.Name}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse1-{{x.Id}}" class="panel-collapse collapse in">
+                                            <div class="panel-body">
+                                                污染源描述：{{x.EmissionType}} <br />
+                                                排污申报登记号：{{x.PollutantCode}} <br />
+                                                排污许可证编号：{{x.Lisense}} <br />
+                                                日排污总量（立方米）：{{x.Amount}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="div_treatments" class="panel panel-default ep-noborder">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                    治污系统
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default" ng-repeat="x in clearSystems">
+                                        <div class="panel-heading ep-panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#collapse2" href="#collapse2-{{x.Id}}">
+                                                    {{x.Name}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse2-{{x.Id}}" class="panel-collapse collapse in">
+                                            <div class="panel-body">
+                                                年处理能力：{{x.ProcessCapacity}} <br />
+                                                系统概述：{{x.Description}} <br />
+                                                系统流程图：{{x.Layout}} <br />
+                                                治理的污染物：{{x.EmissionId}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="div_devices" class="panel panel-default ep-noborder">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                                    被检测设备
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default" ng-repeat="x in devices">
+                                        <div class="panel-heading ep-panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#collapse3" href="#collapse3-{{x.Id}}">
+                                                    {{x.Name}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse3-{{x.Id}}" class="panel-collapse collapse in">
+                                            <div class="panel-body">
+                                                工艺名称：{{x.PrcocessName}} <br />
+                                                流程序号：{{x.ProcessOrder}} <br />
+                                                所属治污系统：{{x.TreatmentId}} <br />
+                                                所属设备组：{{x.GroupId}} <br />
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="div_devicegroups" class="panel panel-default ep-noborder">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+                                    设备组基本信息
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse4" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default" ng-repeat="x in deviceGroups">
+                                        <div class="panel-heading ep-panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#collapse4" href="#collapse4-{{x.Id}}">
+                                                    {{x.Name}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse4-{{x.Id}}" class="panel-collapse collapse in">
+                                            <div class="panel-body">
+                                                工艺名称：{{x.ProcessName}} <br />
+                                                流程序号：{{x.ProcessOrder}}<br />
+                                                治污系统：{{x.TreatmentId}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="div_sensors" class="panel panel-default ep-noborder">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+                                    传感器信息
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse5" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default" ng-repeat="x in sensors">
+                                        <div class="panel-heading ep-panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#collapse5" href="#collapse5-{{x.Id}}">
+                                                    {{x.Name}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse5-{{x.Id}}" class="panel-collapse collapse in">
+                                            <div class="panel-body">
+                                                类型：{{x.Type}} <br />
+                                                节点编号：{{x.NodeId}} <br />
+                                                测量单位：{{x.Unit}} <br />
+                                                最小量程：{{x.RangeMin}} <br />
+                                                最大量程：{{x.RangeMax}} <br />
+                                                安装日期：{{x.InstalledDate}} <br />
+                                                被测设备：{{x.DeviceId}} <br />
+                                                被测设备组： <br />
+                                                数据传输器序号：{{x.DataHubId}} <br />
+                                                <!--<button type="button" class="btn btn-success form-control active" data-toggle="button" aria-pressed="{{x.status}}" autocomplete="off">
+                                                    {{x.status|btnName}}
+                                                </button>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="div_datahubs" class="panel panel-default ep-noborder">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse6">
+                                    数据传输器
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapse6" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default" ng-repeat="x in datahubs">
+                                        <div class="panel-heading ep-panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#collapse6" href="#collapse6-{{x.Id}}">
+                                                    {{x.SerialNo}}
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse6-{{x.Id}}" class="panel-collapse collapse in">
+                                            <div class="panel-body">
+                                                安装日期：{{x.InstallationDate}} <br />
+                                                所属系统：{{x.TreatmentId}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

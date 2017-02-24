@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <script src="lib/jquery.1.9.1.min.js"></script>
+    <link href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <script src="lib/common.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function ($scope) {
+            $.post(ip + "/webapi/v2/Inspectors/TakeInspectorStatusNames", function (data) {
+                $scope.$apply(function () {
+                    $scope.info = data.data[0];
+                });
+            });
+            $.post(ip + "/webapi/v2/Agencies/TakeById/" + epu_id, function (data) {
+                $scope.$apply(function () {
+                    $scope.info = data.data[0];
+                });
+            });
+            $.post(ip + "/webapi/v2/Inspectors/TakeByAgencyId/" + epu_id, function (data) {
+                $scope.$apply(function () {
+                    $scope.persons = data.data;
+                });
+            });
+            //$scope.persons = [{ id: '1', name: '张三', status: '休假', entryDate: '2015-01-01', leaveDate: '2016-10-01', EPB: '合肥市环保局', phoneNo:'13701191671' },
+            //    { id: '2', name: '李四', status: '在岗', entryDate: '2015-01-01', leaveDate: '', EPB: '合肥市环保局', phoneNo: '13701191672' }
+            //];
+            
+        });
+    </script>
+</head>
+<body>
+    <div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+        <div class="row ep-caption">
+            <div class="col-xs-2 ep-full-height" style="display: table;">
+                <div style="display: table-cell; vertical-align: middle;">
+                    <a href="index.html"><span class="glyphicon glyphicon-triangle-left"></span></a>
+                </div>
+            </div>
+            <div class="col-xs-8 text-center ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle">
+                    {{info.Name}}
+                </div>
+            </div>
+            <div class="col-xs-2"></div>
+        </div>
+        <div class="row text-center ep-epb-info-panel">
+            <div class="ep-epb-info-head-txt">{{info.Address}}</div>
+            <div class="ep-epb-info-contact-panel">
+                {{info.Liaison}}<br />
+                <a href="tel:{{info.Phone}}">{{info.Phone}}</a> 
+            </div>
+        </div>
+        <div class=" ep-epb-data-panel">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default" ng-repeat="x in persons">
+                    <div class="panel-heading" style="background-color:rgb(124,189,255);color:#fff;">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#collapse1" href="#collapse1-{{x.Id}}">
+                                {{x.Name}}
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse1-{{x.Id}}" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            状态信息：{{x.Status}} <br />
+                            入职时间：{{x.HireDate}} <br />
+                            离职时间：{{x.QuitDate}} <br />
+                            所属环保局：{{info.Name}} <br />
+                            <div class="ep-epb-contact-phone">
+                                <a href="tel:{{x.Phone}}">{{x.Phone}}</a> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

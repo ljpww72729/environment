@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>环保监控平台测试</title>
+	<meta charset="utf-8" />
+    <script src="lib/jquery.1.9.1.min.js"></script>
+    <link href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <script>
+        //$.post("http://123.56.197.245:9096/webapi/v2/agencies/takeall", function (data) {
+        //    console.log(JSON.stringify(data));
+        //});
+        function logout(){
+       // alert('ac');
+        Android.logout();
+        Android.showToast("abcd");
+        }
+    </script>
+    <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container-fluid" style="height:100vh" ng-app="">
+        <div class="row ep-caption">
+            <div class="col-xs-2 ep-full-height" style="display: table;">
+            </div>
+            <div class="col-xs-8 text-center ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle">
+                    环保监控平台测试
+                </div>
+            </div>
+            <div class="col-xs-2 ep-full-height text-right" style="display: table;">
+                <div style="display: table-cell; vertical-align: middle;">
+                    <a href="#" onclick="logout()">
+                        <img src="images/menu.png" style="display:inline-block; height:20px" />
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row ep-tile-header">
+            <div class="col-xs-4 ep-right-border-white ep-bottom-border-light ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/1.png" alt="" class="ep-tile-header-image" />
+                </div>  
+            </div>
+            <div class="col-xs-4 ep-right-border-white ep-bottom-border-light ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/2.png" alt="" class="ep-tile-header-image" />
+                </div> 
+            </div>
+            <div class="col-xs-4 ep-bottom-border-light ep-full-height ep-table">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/3.png" alt="" class="ep-tile-header-image" />
+                </div> 
+            </div>
+        </div>
+        <div class="row" style="height:38vh">
+            <div class="col-xs-4 ep-right-border-light ep-bottom-border-light ep-full-height ep-table" onmousedown="javascript:location.href='CorpSelection.html?target=Corp'">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/4.png" alt="企业" class="ep-tile-image" />
+                    <div class="ep-tile-font">企业</div>
+                </div>       
+            </div>
+            <div class="col-xs-4 ep-right-border-light ep-bottom-border-light ep-full-height ep-table" onmousedown="javascript:location.href='GIS.html'">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/8.png" alt="GIS地图" class="ep-tile-image" />
+                    <div class="ep-tile-font">GIS地图</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-bottom-border-light ep-full-height ep-table" onmousedown="javascript: location.href = 'CorpSelection.html?target=DataAnalysis'">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/6.png" alt="数据统计" class="ep-tile-image" />
+                    <div class="ep-tile-font">数据统计</div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="height:38vh">
+            <div class="col-xs-4 ep-right-border-light ep-full-height ep-table" onmousedown="javascript:location.href='Warning.html'">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/7.png" alt="报警管理" class="ep-tile-image" />
+                    <div class="ep-tile-font">报警管理</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-right-border-light ep-full-height ep-table" onmousedown="javascript: location.href = 'CorpSelection.html?target=Report'">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/5.png" alt="分析报表" class="ep-tile-image" />
+                    <div class="ep-tile-font">分析报表</div>
+                </div>
+            </div>
+            <div class="col-xs-4 ep-full-height ep-table" onmousedown="javascript:location.href='EPB.html'">
+                <div class="ep-table-cell-v-middle text-center">
+                    <img src="images/9.png" alt="环保局信息" class="ep-tile-image" />
+                    <div class="ep-tile-font">环保局信息</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
