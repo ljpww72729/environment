@@ -15,8 +15,8 @@ android {
         applicationId "com.ww.lp.environment"
         minSdkVersion 9
         targetSdkVersion 25
-        versionCode 2
-        versionName "1.0.2"
+        versionCode 3
+        versionName "1.0.3"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
