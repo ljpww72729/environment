@@ -14,6 +14,9 @@ import com.ww.lp.environment.data.user.UserInfo;
 import com.ww.lp.environment.utils.StringResUtils;
 import com.ww.lp.environment.utils.ToastUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -46,12 +49,20 @@ public class LoginPresenter implements LoginContract.Presenter {
                         @Override
                         public void onResponse(String response) {
                             // Display the first 500 characters of the response string.
-                            mView.success(true);
+                            try {
+                                if (!TextUtils.isEmpty(response)) {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    String userId = jsonObject.optString("userid");
+                                    mView.success(userId, true);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    mView.success(false);
+                    mView.success("", false);
                     ToastUtils.toastShort("账号或密码不正确，请重新登录！");
                 }
             });

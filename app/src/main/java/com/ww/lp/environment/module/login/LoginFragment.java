@@ -77,19 +77,20 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
     }
 
     @Override
-    public void success(boolean result) {
+    public void success(String userId, boolean result) {
         removeProgressDialog();
 //        Intent intent = new Intent(getActivity(), NormalWVActvity.class);
 //        intent.putExtra(NormalWVActvity.LOADURL, "http://www.wowofun.com/test/epapp/index.html");
 //        startActivity(intent);
 //        getActivity().finish();
-        if (result) {
+        if (result && !TextUtils.isEmpty(userId)) {
             //请求成功
             if (loginFragBinding.checkBox.isChecked()) {
                 //存储密码
                 SPUtils.put(getActivity(), SPUtils.USER_NAME, loginFragBinding.getUserInfo().getUsername());
                 SPUtils.put(getActivity(), SPUtils.PASSWORD, loginFragBinding.getUserInfo().getPassword());
             }
+            SPUtils.put(getActivity(), SPUtils.USER_ID, userId);
             Intent intent = new Intent(getActivity(), NormalWVActvity.class);
             intent.putExtra(NormalWVActvity.LOADURL, "http://www.wowofun.com/test/epapp/index.html");
             startActivity(intent);

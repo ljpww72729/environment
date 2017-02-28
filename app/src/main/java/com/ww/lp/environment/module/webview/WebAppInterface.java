@@ -8,6 +8,7 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.ww.lp.environment.module.login.LoginActivity;
+import com.ww.lp.environment.utils.SPUtils;
 
 /**
  * Created by LinkedME06 on 24/02/2017.
@@ -59,5 +60,14 @@ public class WebAppInterface {
                 }
             }
         });
+    }
+
+    /**
+     * 获取UserId
+     * @return userId
+     */
+    @JavascriptInterface
+    public String getUserId(){
+        return (String) SPUtils.get(mContext, SPUtils.USER_ID, "");
     }
 }

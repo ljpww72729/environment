@@ -14,7 +14,7 @@ import com.ww.lp.environment.data.user.UserInfo;
 public class LoginContract {
 
     interface View extends BaseView<Presenter> {
-        void success(boolean result);
+        void success(String userId, boolean result);
         void showProgressDialog(String msg);
         void removeProgressDialog();
     }
