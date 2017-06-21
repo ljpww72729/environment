@@ -66,6 +66,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                     ToastUtils.toastShort("账号或密码不正确，请重新登录！");
                 }
             });
+            stringRequest.setTag(requestTag);
 // Add the request to the RequestQueue.
             VolleySingleton.getInstance().addToRequestQueue(stringRequest);
         }

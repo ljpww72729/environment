@@ -2,7 +2,9 @@ package com.ww.lp.environment.module.webview;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -39,10 +41,25 @@ public class WebAppInterface {
      */
     @JavascriptInterface
     public void logout(){
-        //跳转到登录页面
-        Intent intent = new Intent(mContext, LoginActivity.class);
-        mContext.startActivity(intent);
-        ((Activity)mContext).finish();
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage("确定退出应用？").setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        }).setPositiveButton("退出", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                //跳转到登录页面
+                SPUtils.remove(mContext, SPUtils.PASSWORD);
+                SPUtils.remove(mContext, SPUtils.USER_ID);
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                mContext.startActivity(intent);
+                ((Activity)mContext).finish();
+            }
+        }).create().show();
+
     }
 
     /**

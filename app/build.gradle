@@ -15,12 +15,13 @@ android {
         applicationId "com.ww.lp.environment"
         minSdkVersion 9
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.0.4"
+        versionCode 5
+        versionName "1.0.5"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         debug {
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

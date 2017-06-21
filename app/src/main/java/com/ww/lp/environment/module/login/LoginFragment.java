@@ -65,7 +65,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
                 mPresenter.login(loginFragBinding.getUserInfo());
             }
         });
-        if (!TextUtils.isEmpty((String) SPUtils.get(getActivity(), SPUtils.USER_NAME, ""))) {
+        if (!TextUtils.isEmpty((String) SPUtils.get(getActivity(), SPUtils.USER_NAME, "")) && !TextUtils.isEmpty((String) SPUtils.get(getActivity(), SPUtils.PASSWORD, ""))) {
             mPresenter.login(loginFragBinding.getUserInfo());
         }
         return root;
