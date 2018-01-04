@@ -124,3 +124,8 @@
 #忽略一些警告
 -dontwarn com.google.common.**
 -dontwarn javax.annotation.**
+-keepattributes *Annotation*
+-keepattributes *JavascriptInterface*
+-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+   public *;
+}

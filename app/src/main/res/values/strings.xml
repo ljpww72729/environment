@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">环保监控</string>
+    <string name="app_name">应用</string>
     <string name="progressActivityErrorButton">重试</string>
     <string name="progressActivityEmptyTitlePlaceholder">无任何数据</string>
     <string name="progressActivityEmptyContentPlaceholder">无任何数据\n是不是进错门了？</string>

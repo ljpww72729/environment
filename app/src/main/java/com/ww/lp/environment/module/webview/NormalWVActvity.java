@@ -124,4 +124,7 @@ public class NormalWVActvity extends BaseActivity {
             finish();
         }
     }
+
+
+
 }

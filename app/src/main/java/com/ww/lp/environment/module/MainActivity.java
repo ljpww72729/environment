@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, NormalWVActvity.class);
-                intent.putExtra(NormalWVActvity.LOADURL,"http://www.wowofun.com/test/epapp/index.html");
+                intent.putExtra(NormalWVActvity.LOADURL, "http://www.wowofun.com/test/epapp/index.html");
                 startActivity(intent);
             }
         });
