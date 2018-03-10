@@ -9,12 +9,12 @@ android {
             storePassword 'environment2729'
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.ww.lp.environment"
-        minSdkVersion 9
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 26
         versionCode 5
         versionName "1.0.5"
         vectorDrawables.useSupportLibrary = true
@@ -35,7 +35,7 @@ android {
 }
 
 ext {
-    supportVersion = "25.0.0"
+    supportVersion = "26.1.0"
 }
 
 dependencies {
