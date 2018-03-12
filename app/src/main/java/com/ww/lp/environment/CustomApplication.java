@@ -3,6 +3,7 @@ package com.ww.lp.environment;
 import android.app.Application;
 
 import com.android.volley.toolbox.VolleySingleton;
+import com.microquation.linkedme.android.LinkedME;
 import com.orhanobut.logger.LogLevel;
 import com.orhanobut.logger.Logger;
 
@@ -36,5 +37,16 @@ public class CustomApplication extends Application {
             Logger.init("lp_log").logLevel(LogLevel.NONE);
         }
 
+        // 初始化SDK
+        LinkedME.getInstance(this);
+
+        if (BuildConfig.DEBUG) {
+            //设置debug模式下打印LinkedME日志
+            LinkedME.getInstance().setDebug();
+        }
+        //初始时设置为false，在配置Uri Scheme的Activity的onResume()中设置为true
+        LinkedME.getInstance().setImmediate(false);
+
     }
+
 }

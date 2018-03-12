@@ -40,7 +40,7 @@ public class WebAppInterface {
      * 登出
      */
     @JavascriptInterface
-    public void logout(){
+    public void logout() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setMessage("确定退出应用？").setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
@@ -56,7 +56,7 @@ public class WebAppInterface {
                 SPUtils.remove(mContext, SPUtils.USER_ID);
                 Intent intent = new Intent(mContext, LoginActivity.class);
                 mContext.startActivity(intent);
-                ((Activity)mContext).finish();
+                ((Activity) mContext).finish();
             }
         }).create().show();
 
@@ -66,25 +66,58 @@ public class WebAppInterface {
      * 后退
      */
     @JavascriptInterface
-    public void back(){
+    public void back() {
         normal_wv.post(new Runnable() {
             @Override
             public void run() {
                 if (normal_wv.canGoBack()) {
                     normal_wv.goBack();
                 } else {
-                    ((Activity)mContext).finish();
+                    ((Activity) mContext).finish();
                 }
             }
         });
     }
 
     /**
+     * 设置值
+     */
+    @JavascriptInterface
+    public void setData(String key, String value) {
+        SPUtils.put(mContext, key, value);
+    }
+
+    /**
+     * 获取值
+     */
+    @JavascriptInterface
+    public String getData(String key, String defaultValue) {
+        return (String) SPUtils.get(mContext, key, defaultValue);
+    }
+
+    /**
+     * 包含值
+     */
+    @JavascriptInterface
+    public boolean containsData(String key) {
+        return SPUtils.contains(mContext, key);
+    }
+
+    /**
+     * 清除所有值
+     */
+    @JavascriptInterface
+    public void clearData() {
+        SPUtils.clear(mContext);
+    }
+
+    /**
      * 获取UserId
+     *
      * @return userId
      */
     @JavascriptInterface
-    public String getUserId(){
+    public String getUserId() {
         return (String) SPUtils.get(mContext, SPUtils.USER_ID, "");
     }
 }

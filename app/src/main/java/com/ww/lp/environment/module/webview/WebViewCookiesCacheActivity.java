@@ -2,6 +2,7 @@ package com.ww.lp.environment.module.webview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -24,11 +25,17 @@ import android.webkit.WebViewClient;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 
+import com.microquation.linkedme.android.LinkedME;
+import com.microquation.linkedme.android.callback.LMDLResultListener;
+import com.microquation.linkedme.android.indexing.LMUniversalObject;
+import com.microquation.linkedme.android.referral.LMError;
+import com.microquation.linkedme.android.util.LinkProperties;
 import com.ww.lp.environment.BaseActivity;
 import com.ww.lp.environment.R;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * 可以设置Cookies及缓存的WebView
@@ -39,6 +46,7 @@ import java.net.URL;
 public class WebViewCookiesCacheActivity extends BaseActivity {
     private WebView normal_wv;
     // 当前显示的url，包括锚点url
+    private String baseLoadUrl = "http://www.windant.com/login.aspx";
     private String loadUrl;
     private ProgressBar loading;
     private WebSettings webSettings = null;
@@ -48,9 +56,73 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate: ");
         setContentView(R.layout.normal_wv_act, false, false, true);
-        loadUrl = "http://www.windant.com/";
-        initView();
+        loadUrl = baseLoadUrl;
+        // TODO: 21/07/2017 demo中去除以下代码
+        //----------以下针对必须在launcher页面处理数据的情况，但该处理方式存在两个缺陷：
+        // 1. 因为只能在launcher页面处理获取数据，如果应用宝唤起app时，app之前已被应用宝唤起并退到后台，
+        // 就无法经过launcher页面，也就无法获取到参数。
+        // 2. 如果因为网络问题，获取数据比较慢，那么页面展示时间就会变长
+        // ---start---
+
+        LinkedME.getInstance().setDeepLinkListener(new LMDLResultListener() {
+            @Override
+            public void dlResult(Intent handledIntent, LMError lmError) {
+                Log.i(TAG, "dlResult: ");
+                if (lmError != null || handledIntent == null) {
+                    initView();
+                } else {
+                    boolean jumpStatus = false;
+                    //获取与深度链接相关的值
+                    LinkProperties linkProperties = handledIntent.getParcelableExtra(LinkedME.LM_LINKPROPERTIES);
+                    LMUniversalObject lmUniversalObject = handledIntent.getParcelableExtra(LinkedME.LM_UNIVERSALOBJECT);
+                    //LinkedME SDK初始化成功，获取跳转参数，具体跳转参数在LinkProperties中，和创建深度链接时设置的参数相同；
+                    if (linkProperties != null) {
+                        Log.i(TAG, "Channel " + linkProperties.getChannel());
+                        Log.i(TAG, "control params " + linkProperties.getControlParams());
+                        Log.i(TAG, "link(深度链接) " + linkProperties.getLMLink());
+                        Log.i(TAG, "是否为新安装 " + linkProperties.isLMNewUser());
+                        //获取自定义参数封装成的ArrayMap对象
+                        HashMap<String, String> arrayMap = linkProperties.getControlParams();
+
+                        //获取传入的参数
+                        String pid = arrayMap.get("pid");
+                        if (pid != null) {
+                            loadUrl = baseLoadUrl + "?pid=" + pid;
+                        }
+                        //清除跳转数据，该方法理论上不需要调用，因Android集成方式各种这样，若出现重复跳转的情况，可在跳转成功后调用该方法清除参数
+                        //LinkedME.getInstance().clearSessionParams();
+                    }
+                    initView();
+                }
+            }
+        });
+
+        //----------以下针对必须在launcher页面处理数据的情况，但该处理方式存在两个缺陷：
+        // 1. 因为只能在launcher页面处理获取数据，如果应用宝唤起app时，app之前已被应用宝唤起并退到后台，
+        // 就无法经过launcher页面，也就无法获取到参数。
+        // 2. 如果因为网络问题，获取数据比较慢，那么页面展示时间就会变长
+        // ---end---
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.i(TAG, "onNewIntent: " + intent);
+        setIntent(intent);
+        String pid = intent.getStringExtra("pid");
+        if (pid != null) {
+            loadUrl = baseLoadUrl + "?pid=" + pid;
+            initView();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume: ");
+        LinkedME.getInstance().setImmediate(true);
     }
 
     private void initView() {
@@ -90,6 +162,7 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
      */
     @SuppressLint("SetJavaScriptEnabled")
     private void initWebView(WebView webView) {
+        Log.i(TAG, "initWebView: loadurl === " + loadUrl);
         webSettings = webView.getSettings();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);

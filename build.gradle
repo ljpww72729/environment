@@ -4,6 +4,9 @@ buildscript {
     repositories {
         jcenter()
         google()
+        maven {
+            url 'https://dl.bintray.com/linkedme2016/lkme-deeplinks'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
@@ -17,6 +20,9 @@ allprojects {
     repositories {
         jcenter()
         google()
+        maven {
+            url 'https://dl.bintray.com/linkedme2016/lkme-deeplinks'
+        }
     }
 }
 
