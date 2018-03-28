@@ -92,6 +92,10 @@
 
         </activity>
 
+        <service
+                android:name=".module.DownloadService"
+                android:exported="false"/>
+
         <activity
                 android:name=".module.webview.NormalWVActvity"
                 android:screenOrientation="portrait"

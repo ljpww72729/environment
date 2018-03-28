@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -11,10 +13,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
 
+import com.ww.lp.environment.module.DownloadService;
 import com.ww.lp.environment.utils.AndroidUtils;
 import com.ww.lp.environment.utils.SPUtils;
 
@@ -23,6 +28,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 
+import static com.ww.lp.environment.module.DownloadService.DOWNLOAD_FILE_NAME;
+import static com.ww.lp.environment.module.DownloadService.DOWNLOAD_FILE_URL;
+
 /**
  * Created by LinkedME06 on 24/02/2017.
  */
@@ -30,6 +38,7 @@ import java.net.URL;
 public class WebAppInterface {
     Context mContext;
     private WebView normal_wv;
+    private boolean checkVersion = false;
 
     /**
      * Instantiate the interface and set the context
@@ -189,6 +198,7 @@ public class WebAppInterface {
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Toast.makeText(mContext, "分享失败~", Toast.LENGTH_LONG).show();
                 }
             }
         }).start();
@@ -216,6 +226,7 @@ public class WebAppInterface {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(mContext, "分享失败~", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -227,4 +238,94 @@ public class WebAppInterface {
         return AndroidUtils.getMAC(mContext);
     }
 
+    /**
+     * 版本更新
+     *
+     * @param versionCode 数字版本号，例如：5
+     * @param downloadUrl apk下载地址，例如：http://xxxx/xx/x.apk
+     * @param content     更新内容，例如：修复bug\n美化UI
+     */
+    @JavascriptInterface
+    public void checkAppVersion(final String versionCode, final String downloadUrl, final String content) {
+        if (checkVersion) {
+            return;
+        }
+        checkVersion = true;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (TextUtils.isEmpty(downloadUrl) || !downloadUrl.startsWith("http")) {
+                        return;
+                    }
+                    int currentVersionCode = 0;
+                    // ---get the package info---
+                    PackageManager pm = mContext.getPackageManager();
+                    PackageInfo pi = pm.getPackageInfo(mContext.getPackageName(), 0);
+                    currentVersionCode = pi.versionCode;
+
+                    if (currentVersionCode < Integer.valueOf(versionCode)) {
+                        // 更新app
+                        AlertDialog.Builder b = new AlertDialog.Builder(mContext);
+                        b.setTitle("版本更新");
+                        String updateContent = "检测到新版，请更新~";
+                        if (!TextUtils.isEmpty(content)) {
+                            updateContent = content;
+                        }
+                        b.setMessage(updateContent);
+                        b.setPositiveButton("升级", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                downloadApkService(mContext, versionCode, downloadUrl);
+                            }
+                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        b.setCancelable(false);
+                        b.create().show();
+                    }
+                } catch (Exception e) {
+                    Log.e("VersionInfo", "Exception", e);
+                }
+            }
+        });
+
+    }
+
+    private void downloadApkService(Context mContext, String versionCode, String url) {
+        // 开始下载上报
+        Intent intent = new Intent(mContext, DownloadService.class);
+        intent.putExtra(DOWNLOAD_FILE_URL, url);
+        String fileName = "haoyungou-v" + versionCode + ".apk";
+//        Uri uri = Uri.parse(url);
+//        if (url.endsWith(".apk")) {
+//            String[] apkUrl = uri.getEncodedPath().split("/");
+//            if (apkUrl.length > 1) {
+//                fileName = apkUrl[apkUrl.length - 1];
+//            }
+//        }
+        intent.putExtra(DOWNLOAD_FILE_NAME, fileName);
+
+        mContext.startService(intent);
+    }
+
+    /**
+     * 获取mac地址
+     */
+    @JavascriptInterface
+    public String getAppVersion() {
+        String versionName = "";
+        try {
+            PackageManager pm = mContext.getPackageManager();
+            PackageInfo pi = null;
+            pi = pm.getPackageInfo(mContext.getPackageName(), 0);
+            versionName = pi.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return versionName;
+    }
 }

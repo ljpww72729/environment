@@ -2,7 +2,13 @@
 <resources>
     <paths>
         <files-path
-                name="extFileImage"
-                path="shared/images/"/>
+                name="inFileImage"
+                path="shared/"/>
     </paths>
+    <paths>
+        <external-files-path
+                name="extFileApk"
+                path="apk/"/>
+    </paths>
+
 </resources>

@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -27,6 +26,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AbsListView;
+import android.widget.Toast;
 
 import com.microquation.linkedme.android.LinkedME;
 import com.microquation.linkedme.android.callback.LMDLResultListener;
@@ -52,7 +52,9 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 1000;
     private WebView normal_wv;
     // 当前显示的url，包括锚点url
+    // TODO: 3/28/18 lipeng 这个地址发布的时候需要注意一下
     private String baseLoadUrl = "http://www.windant.com/login.aspx";
+    //    private String baseLoadUrl = "http://60.205.217.173:9099/browser/webview.html";
     private String loadUrl;
     //    private ProgressBar loading;
     private WebSettings webSettings = null;
@@ -70,13 +72,12 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_PHONE_STATE)) {
-                Snackbar.make(findViewById(R.id.container), "请授予电话权限~", Snackbar.LENGTH_LONG).show();
-            } else {
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_PHONE_STATE},
-                        PERMISSIONS_REQUEST_READ_PHONE_STATE);
+                Toast.makeText(this, "请授予电话权限~", Toast.LENGTH_SHORT).show();
             }
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_PHONE_STATE},
+                    PERMISSIONS_REQUEST_READ_PHONE_STATE);
         }
         loadUrl = baseLoadUrl;
         // TODO: 21/07/2017 demo中去除以下代码
@@ -160,10 +161,16 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
         Log.i(TAG, "onNewIntent: " + intent);
         setIntent(intent);
         String pid = intent.getStringExtra("pid");
-        if (pid != null) {
+        String rid = intent.getStringExtra("rid");
+        if (pid != null && rid != null) {
+            loadUrl = baseLoadUrl + "?pid=" + pid + "&rid=" + rid;
+        } else if (pid != null) {
             loadUrl = baseLoadUrl + "?pid=" + pid;
-            initView();
+        } else if (rid != null) {
+            loadUrl = baseLoadUrl + "?rid=" + rid;
         }
+        initView();
+
     }
 
     @Override
@@ -356,15 +363,13 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
                         if (connRespnse.length > 1) {
                             synCookies(url, connRespnse[1]);
                         }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                normal_wv.loadUrl(url);//webview控件调用需要在主线程中进行
-                            }
-                        });
-
-
                     }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            normal_wv.loadUrl(url);//webview控件调用需要在主线程中进行
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
