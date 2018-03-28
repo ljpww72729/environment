@@ -36,6 +36,7 @@ import com.microquation.linkedme.android.referral.PrefHelper;
 import com.microquation.linkedme.android.util.LinkProperties;
 import com.ww.lp.environment.BaseActivity;
 import com.ww.lp.environment.R;
+import com.ww.lp.environment.utils.AndroidUtils;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -106,21 +107,24 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
                         Log.i(TAG, "是否为新安装 " + linkProperties.isLMNewUser());
                         //获取自定义参数封装成的ArrayMap对象
                         HashMap<String, String> arrayMap = linkProperties.getControlParams();
-
-                        if (arrayMap.size() > 0) {
-                            //获取传入的参数
-                            Iterator iterator = arrayMap.keySet().iterator();
-                            while (iterator.hasNext()) {
-                                String key = (String) iterator.next();
-                                String value = arrayMap.get(key);
-                                if (loadUrl.contains("?")) {
-                                    loadUrl = loadUrl + "&" + key + "=" + value;
-                                } else {
-                                    loadUrl = baseLoadUrl + "?" + key + "=" + value;
+                        if (linkProperties.isLMNewUser()) {
+                            if (arrayMap.size() > 0) {
+                                //获取传入的参数
+                                Iterator iterator = arrayMap.keySet().iterator();
+                                while (iterator.hasNext()) {
+                                    String key = (String) iterator.next();
+                                    String value = arrayMap.get(key);
+                                    if (loadUrl.contains("?")) {
+                                        loadUrl = loadUrl + "&" + key + "=" + value;
+                                    } else {
+                                        loadUrl = baseLoadUrl + "?" + key + "=" + value;
+                                    }
                                 }
+                                loadUrl = loadUrl + "&mac=" +
+                                        AndroidUtils.getMAC(WebViewCookiesCacheActivity.this)
+                                                .replaceAll(":", "");
                             }
                         }
-
                         //清除跳转数据，该方法理论上不需要调用，因Android集成方式各种这样，若出现重复跳转的情况，可在跳转成功后调用该方法清除参数
                         //LinkedME.getInstance().clearSessionParams();
                     }
@@ -159,17 +163,17 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         Log.i(TAG, "onNewIntent: " + intent);
-        setIntent(intent);
-        String pid = intent.getStringExtra("pid");
-        String rid = intent.getStringExtra("rid");
-        if (pid != null && rid != null) {
-            loadUrl = baseLoadUrl + "?pid=" + pid + "&rid=" + rid;
-        } else if (pid != null) {
-            loadUrl = baseLoadUrl + "?pid=" + pid;
-        } else if (rid != null) {
-            loadUrl = baseLoadUrl + "?rid=" + rid;
-        }
-        initView();
+//        setIntent(intent);
+//        String pid = intent.getStringExtra("pid");
+//        String rid = intent.getStringExtra("rid");
+//        if (pid != null && rid != null) {
+//            loadUrl = baseLoadUrl + "?pid=" + pid + "&rid=" + rid;
+//        } else if (pid != null) {
+//            loadUrl = baseLoadUrl + "?pid=" + pid;
+//        } else if (rid != null) {
+//            loadUrl = baseLoadUrl + "?rid=" + rid;
+//        }
+//        initView();
 
     }
 
@@ -177,7 +181,7 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume: ");
-        LinkedME.getInstance().setImmediate(true);
+//        LinkedME.getInstance().setImmediate(true);
     }
 
     private void initView() {
