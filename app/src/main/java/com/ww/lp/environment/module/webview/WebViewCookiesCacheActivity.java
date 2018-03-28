@@ -1,8 +1,10 @@
 package com.ww.lp.environment.module.webview;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,6 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
@@ -23,12 +27,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AbsListView;
-import android.widget.ProgressBar;
 
 import com.microquation.linkedme.android.LinkedME;
 import com.microquation.linkedme.android.callback.LMDLResultListener;
 import com.microquation.linkedme.android.indexing.LMUniversalObject;
 import com.microquation.linkedme.android.referral.LMError;
+import com.microquation.linkedme.android.referral.PrefHelper;
 import com.microquation.linkedme.android.util.LinkProperties;
 import com.ww.lp.environment.BaseActivity;
 import com.ww.lp.environment.R;
@@ -36,6 +40,7 @@ import com.ww.lp.environment.R;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * 可以设置Cookies及缓存的WebView
@@ -44,13 +49,15 @@ import java.util.HashMap;
  */
 
 public class WebViewCookiesCacheActivity extends BaseActivity {
+    private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 1000;
     private WebView normal_wv;
     // 当前显示的url，包括锚点url
     private String baseLoadUrl = "http://www.windant.com/login.aspx";
     private String loadUrl;
-    private ProgressBar loading;
+    //    private ProgressBar loading;
     private WebSettings webSettings = null;
     private ScrollChildSwipeRefreshLayout swiperefresh;
+    private static final String APP_CACAHE_DIRNAME = "/webcache";
 
 
     @Override
@@ -58,6 +65,19 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate: ");
         setContentView(R.layout.normal_wv_act, false, false, true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.READ_PHONE_STATE)) {
+                Snackbar.make(findViewById(R.id.container), "请授予电话权限~", Snackbar.LENGTH_LONG).show();
+            } else {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_PHONE_STATE},
+                        PERMISSIONS_REQUEST_READ_PHONE_STATE);
+            }
+        }
         loadUrl = baseLoadUrl;
         // TODO: 21/07/2017 demo中去除以下代码
         //----------以下针对必须在launcher页面处理数据的情况，但该处理方式存在两个缺陷：
@@ -86,11 +106,20 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
                         //获取自定义参数封装成的ArrayMap对象
                         HashMap<String, String> arrayMap = linkProperties.getControlParams();
 
-                        //获取传入的参数
-                        String pid = arrayMap.get("pid");
-                        if (pid != null) {
-                            loadUrl = baseLoadUrl + "?pid=" + pid;
+                        if (arrayMap.size() > 0) {
+                            //获取传入的参数
+                            Iterator iterator = arrayMap.keySet().iterator();
+                            while (iterator.hasNext()) {
+                                String key = (String) iterator.next();
+                                String value = arrayMap.get(key);
+                                if (loadUrl.contains("?")) {
+                                    loadUrl = loadUrl + "&" + key + "=" + value;
+                                } else {
+                                    loadUrl = baseLoadUrl + "?" + key + "=" + value;
+                                }
+                            }
                         }
+
                         //清除跳转数据，该方法理论上不需要调用，因Android集成方式各种这样，若出现重复跳转的情况，可在跳转成功后调用该方法清除参数
                         //LinkedME.getInstance().clearSessionParams();
                     }
@@ -105,6 +134,25 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
         // 2. 如果因为网络问题，获取数据比较慢，那么页面展示时间就会变长
         // ---end---
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_READ_PHONE_STATE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
     }
 
     @Override
@@ -127,7 +175,7 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
 
     private void initView() {
         normal_wv = findViewById(R.id.normal_wv);
-        loading = findViewById(R.id.loading);
+//        loading = findViewById(R.id.loading);
         // Set the scrolling view in the custom SwipeRefreshLayout.
         initWebView(normal_wv);
         swiperefresh = findViewById(R.id.swiperefresh);
@@ -161,7 +209,7 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
      * 初始化
      */
     @SuppressLint("SetJavaScriptEnabled")
-    private void initWebView(WebView webView) {
+    private void initWebView(final WebView webView) {
         Log.i(TAG, "initWebView: loadurl === " + loadUrl);
         webSettings = webView.getSettings();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -182,20 +230,27 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
         webSettings.setUseWideViewPort(true);// 支持viewport元标签
         webSettings.setLoadWithOverviewMode(true); // 缩小页面以适应WebView的大小
         webSettings.setDomStorageEnabled(true);//设置支持html5本地存储，有些h5页面服务器做了缓存，webview控件也要设置，否则显示不出来页面
-        if (isNetworkConnected(WebViewCookiesCacheActivity.this)) {
-            // 如果有网络则使用默认加载模式，有缓存并且没有失效则走缓存，否则走网络
-            webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        } else {
-            // 如果有缓存，无论缓存是否失效都使用缓存资源，否则从网络加载
-            webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        }
+        String cacheDirPath = getFilesDir().getAbsolutePath() + APP_CACAHE_DIRNAME;
+        Log.i(TAG, "cacheDirPath=" + cacheDirPath);
+
+        //设置数据库缓存路径
+        webSettings.setDatabasePath(cacheDirPath);
+        webSettings.setDatabaseEnabled(true);
+
+        //设置  Application Caches 缓存目录
+        webSettings.setAppCachePath(cacheDirPath);
+        webSettings.setAppCacheMaxSize(20 * 1024 * 1024);
+        //开启 Application Caches 功能
+        webSettings.setAppCacheEnabled(true);
+//        if (isNetworkConnected(WebViewCookiesCacheActivity.this)) {
+        // 如果有网络则使用默认加载模式，有缓存并且没有失效则走缓存，否则走网络
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+//        } else {
+//            // 如果有缓存，无论缓存是否失效都使用缓存资源，否则从网络加载
+//            webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+//        }
         webSettings.setDefaultTextEncodingName("UTF-8");
         webSettings.setAllowFileAccess(true);// 设置可以访问缓存文件
-
-        // 以下配置有问题
-//        webSettings.setAppCacheEnabled(true);//应用可以有缓存
-//        String appCacheDir = getApplicationContext().getDir("cache", Context.MODE_PRIVATE).getPath();
-//        webSettings.setAppCachePath(appCacheDir);
 
         // Enable third-party cookies if on Lolipop. TODO: Make this configurable
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -209,9 +264,12 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.i(TAG, "shouldOverrideUrlLoading: " + url);
-                view.loadUrl(url);
-                return true;
+                return Build.VERSION.SDK_INT < Build.VERSION_CODES.N && overrideUrlLoading(view, url);
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && overrideUrlLoading(view, request.getUrl().toString());
             }
 
             @Override
@@ -222,15 +280,19 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                loading.setVisibility(View.VISIBLE);
+                showLoading();
+//                loading.setVisibility(View.VISIBLE);
                 webSettings.setBlockNetworkImage(true);
                 super.onPageStarted(view, url, favicon);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                loadUrl = url;
-                loading.setVisibility(View.GONE);
+                showContent();
+                if (!loadFailed) {
+                    loadUrl = url;
+                }
+//                loading.setVisibility(View.GONE);
                 if (swiperefresh.isRefreshing()) {
                     swiperefresh.setRefreshing(false);
                 }
@@ -241,12 +303,13 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
 
             @Override
             public void onReceivedError(final WebView view, WebResourceRequest request, WebResourceError error) {
-//                showErrorDefault(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        normal_wv.loadUrl(loadUrl);
-//                    }
-//                });
+                // 处理错误的情况
+                showErrorDefault(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        normal_wv.loadUrl(loadUrl);
+                    }
+                });
                 super.onReceivedError(view, request, error);
             }
 
@@ -335,6 +398,34 @@ public class WebViewCookiesCacheActivity extends BaseActivity {
             }
         }
         return false;
+    }
+
+    private boolean overrideUrlLoading(WebView view, String url) {
+        Log.i(TAG, "shouldOverrideUrlLoading: " + url);
+        //重写该方法是为了处理uri scheme,对于uri scheme则直接唤起APP
+        //去掉回车、换行、tab
+        String stray_spacing = "[\n\r\t\\p{Zl}\\p{Zp}\u0085]+";
+        url = url.trim();
+        url = url.replaceAll(stray_spacing, "");
+        PrefHelper.Debug("LinkedME", "url ===== " + url);
+        String rfc2396regex = "^(([a-zA-Z][a-zA-Z0-9\\+\\-\\.]*)://)(([^/?#]*)?([^?#]*)(\\?([^#]*))?)?(#(.*))?";
+        String http_scheme_slashes = "^(https?://)/+(.*)";
+        //(?i)后面的匹配不区分大小写
+        String all_schemes_pattern = "(?i)^(http|https|ftp|mms|rtsp|wais)://.*";
+        if (url.matches(all_schemes_pattern)) {
+            view.loadUrl(url);
+            return true;
+        }
+        if (url.matches(rfc2396regex)) {
+            showErrorDefault(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    normal_wv.loadUrl(loadUrl);
+                }
+            });
+            return true;
+        }
+        return true;
     }
 
 }

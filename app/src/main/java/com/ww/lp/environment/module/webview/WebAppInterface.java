@@ -4,13 +4,24 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.ww.lp.environment.module.login.LoginActivity;
+import com.ww.lp.environment.utils.AndroidUtils;
 import com.ww.lp.environment.utils.SPUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Created by LinkedME06 on 24/02/2017.
@@ -51,11 +62,11 @@ public class WebAppInterface {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                //跳转到登录页面
-                SPUtils.remove(mContext, SPUtils.PASSWORD);
-                SPUtils.remove(mContext, SPUtils.USER_ID);
-                Intent intent = new Intent(mContext, LoginActivity.class);
-                mContext.startActivity(intent);
+//                跳转到登录页面
+//                SPUtils.remove(mContext, SPUtils.PASSWORD);
+//                SPUtils.remove(mContext, SPUtils.USER_ID);
+//                Intent intent = new Intent(mContext, LoginActivity.class);
+//                mContext.startActivity(intent);
                 ((Activity) mContext).finish();
             }
         }).create().show();
@@ -120,4 +131,100 @@ public class WebAppInterface {
     public String getUserId() {
         return (String) SPUtils.get(mContext, SPUtils.USER_ID, "");
     }
+
+    /**
+     * 分享图片
+     *
+     * @param imageUrl 图片地址
+     */
+    @JavascriptInterface
+    public void shareImage(final String imageUrl) {
+        Toast.makeText(mContext, "正在创建分享，请稍候...", Toast.LENGTH_LONG).show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Bitmap bitmap;
+                try {
+                    // Download Image from URL
+                    InputStream input = new URL(imageUrl).openStream();
+                    // Decode Bitmap
+                    bitmap = BitmapFactory.decodeStream(input);
+                    File imgFileDir = new File(mContext.getFilesDir().getAbsolutePath() + "/shared/images");
+                    if (!imgFileDir.exists()) {
+                        imgFileDir.mkdirs();
+                    }
+                    String suffix = ".jpg";
+                    if (imageUrl.contains(".png")) {
+                        suffix = ".png";
+                    }
+                    final File imgFile = new File(imgFileDir, "share" + suffix);
+                    if (!imgFile.exists()) {
+                        imgFile.createNewFile();
+                    } else {
+                        imgFile.delete();
+                        imgFile.createNewFile();
+                    }
+                    FileOutputStream fileOutputStream = new FileOutputStream(imgFile);
+                    Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
+                    if (suffix.equals(".png")) {
+                        compressFormat = Bitmap.CompressFormat.PNG;
+                    }
+                    bitmap.compress(compressFormat, 100, fileOutputStream);
+                    input.close();
+                    fileOutputStream.close();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent share = new Intent(Intent.ACTION_SEND);
+                            share.setType("image/*");
+                            Uri imageUri = FileProvider.getUriForFile(mContext,
+                                    mContext.getApplicationContext().getPackageName() + ".fileprovider",
+                                    imgFile);
+                            share.putExtra(Intent.EXTRA_STREAM, imageUri);
+                            share.putExtra(Intent.EXTRA_SUBJECT, "好运购分享");
+                            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                            mContext.startActivity(Intent.createChooser(share, "分享到"));
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+
+    /**
+     * 分享内容
+     *
+     * @param content 分享内容
+     */
+    @JavascriptInterface
+    public void shareText(final String content) {
+        Toast.makeText(mContext, "正在创建分享，请稍候...", Toast.LENGTH_LONG).show();
+        try {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.setType("text/plain");
+                    share.putExtra(Intent.EXTRA_TEXT, content);
+                    share.putExtra(Intent.EXTRA_SUBJECT, "好运购分享");
+                    mContext.startActivity(Intent.createChooser(share, "分享到"));
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 获取mac地址
+     */
+    @JavascriptInterface
+    public String getMacAddress() {
+        return AndroidUtils.getMAC(mContext);
+    }
+
 }

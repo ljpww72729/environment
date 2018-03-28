@@ -31,6 +31,7 @@ public class BaseActivity extends AppCompatActivity {
     protected final String TAG = this.getClass().getName();
     protected ProgressLayout progressLayout;
     public static ProgressDialog dialog_lp = null;
+    protected boolean loadFailed = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,7 +120,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             onBackPressed();
             return true;
         }
@@ -154,6 +155,7 @@ public class BaseActivity extends AppCompatActivity {
      * @param onClickListener 点击错误页面重试按钮后的监听事件
      */
     public void showErrorDefault(View.OnClickListener onClickListener) {
+        loadFailed = true;
         progressLayout.showError(ContextCompat.getDrawable(this, R.drawable.va_error), null, null, null, onClickListener);
     }
 
@@ -161,6 +163,7 @@ public class BaseActivity extends AppCompatActivity {
      * 显示正在加载页面
      */
     public void showLoading() {
+        loadFailed = false;
         progressLayout.showLoading();
     }
 
@@ -168,7 +171,9 @@ public class BaseActivity extends AppCompatActivity {
      * 显示内容页面
      */
     public void showContent() {
-        progressLayout.showContent();
+        if (!loadFailed) {
+            progressLayout.showContent();
+        }
     }
 
 

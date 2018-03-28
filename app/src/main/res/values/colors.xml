@@ -6,9 +6,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#000000</color>
 
-    <color name="primary">#68A6F1</color>
-    <color name="primary_dark">#2E63AD</color>
-    <color name="primary_darker">#2E63AD</color>
+    <color name="primary">#A12B20</color>
+    <color name="primary_dark">#A12B20</color>
+    <color name="primary_darker">#A12B20</color>
     <!--<color name="primary_light">#D7CCC8</color>-->
     <color name="primary_light">#FFCCBC</color>
     <color name="accent">#03A9F4</color>
