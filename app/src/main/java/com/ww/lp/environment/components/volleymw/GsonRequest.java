@@ -25,8 +25,15 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by lipeng on 2016 6-16.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-11-24
+ * <p> Version: 1.0.9
+ * <p> Description: gson数据请求处理类
+ * <p>
+ * <p>***********************************************************************
  */
+
 public class GsonRequest<T> extends Request<T> {
     private Map<String, String> param;
     private final Class<T> clazz;

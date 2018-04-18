@@ -12,7 +12,13 @@ import com.ww.lp.environment.module.webview.WebViewCookiesCacheActivity;
 import java.util.HashMap;
 
 /**
- * Created by LinkedME06 on 3/10/18.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2018-03-10
+ * <p> Version: 1.0.9
+ * <p> Description: 参数处理逻辑
+ * <p>
+ * <p>***********************************************************************
  */
 
 public class MiddleActivity extends BaseActivity {

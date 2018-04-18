@@ -24,7 +24,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by LinkedME06 on 15/01/2017.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-1-24
+ * <p> Version: 1.0.9
+ * <p> Description: 下载服务
+ * <p>
+ * <p>***********************************************************************
  */
 
 public class DownloadService extends Service {

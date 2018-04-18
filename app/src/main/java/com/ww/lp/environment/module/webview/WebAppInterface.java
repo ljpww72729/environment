@@ -35,6 +35,16 @@ import static com.ww.lp.environment.module.DownloadService.DOWNLOAD_FILE_URL;
  * Created by LinkedME06 on 24/02/2017.
  */
 
+/**
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-02-24
+ * <p> Version: 1.0.9
+ * <p> Description: js交互接口
+ * <p>
+ * <p>***********************************************************************
+ */
+
 public class WebAppInterface {
     Context mContext;
     private WebView normal_wv;

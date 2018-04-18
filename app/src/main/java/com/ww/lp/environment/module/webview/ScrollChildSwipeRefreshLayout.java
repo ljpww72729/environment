@@ -6,7 +6,13 @@ import android.util.AttributeSet;
 import android.view.View;
 
 /**
- * Created by LinkedME06 on 16/11/10.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-12-03
+ * <p> Version: 1.0.9
+ * <p> Description: 下拉刷新组件
+ * <p>
+ * <p>***********************************************************************
  */
 
 public class ScrollChildSwipeRefreshLayout extends SwipeRefreshLayout {

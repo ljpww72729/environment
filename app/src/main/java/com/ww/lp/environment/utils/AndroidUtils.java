@@ -16,9 +16,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by LinkedME06 on 3/27/18.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2018-03-27
+ * <p> Version: 1.0.9
+ * <p> Description: android工具帮助类
+ * <p>
+ * <p>***********************************************************************
  */
-
 public class AndroidUtils {
 
     //mac地址

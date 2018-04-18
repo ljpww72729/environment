@@ -44,9 +44,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * 可以设置Cookies及缓存的WebView
- *
- * Created by lipeng on 2017/12/24.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-12-24
+ * <p> Version: 1.0.9
+ * <p> Description: 可以设置Cookies及缓存的WebView
+ * <p>
+ * <p>***********************************************************************
  */
 
 public class WebViewCookiesCacheActivity extends BaseActivity {

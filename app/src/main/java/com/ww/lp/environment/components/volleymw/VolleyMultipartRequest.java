@@ -19,9 +19,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
-
 /**
- * 文件上传类，请不要上传大文件 Created by LinkedME06 on 16/11/14.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-11-24
+ * <p> Version: 1.0.9
+ * <p> Description: volley多任务下载帮助类
+ * <p>
+ * <p>***********************************************************************
  */
 
 public class VolleyMultipartRequest<T> extends Request<T> {

@@ -20,7 +20,13 @@ import com.ww.lp.environment.R;
 
 
 /**
- * Created by LinkedME06 on 16/11/25.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-11-24
+ * <p> Version: 1.0.9
+ * <p> Description: 通用WebView，加载h5页面
+ * <p>
+ * <p>***********************************************************************
  */
 
 public class NormalWVActvity extends BaseActivity {

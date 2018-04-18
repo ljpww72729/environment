@@ -22,9 +22,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * This provides methods to help Activities load their UI.
+ * <p>***********************************************************************
+ * <p> Author: lipeng
+ * <p> CreateData: 2017-12-24
+ * <p> Version: 1.0.9
+ * <p> Description: activity帮助类
+ * <p>
+ * <p>***********************************************************************
  */
 public class ActivityUtils {
 
